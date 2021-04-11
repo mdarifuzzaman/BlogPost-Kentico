@@ -1,5 +1,8 @@
 ﻿using BlogPost.Models;
+using BlogPost.Models.Home;
+using BlogPost.Providers;
 using CMS.DocumentEngine;
+using CMS.DocumentEngine.Types.HouseRestaurant;
 using Kentico.Content.Web.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -31,7 +34,7 @@ namespace BlogPost.Controllers
 
             // Retrieves a page from the Xperience database with the '/Home' node alias path
             TreeNode page = _pagesRetriever.Retrieve<TreeNode>(query => query
-                                .Path("/", PathTypeEnum.Single))
+                                .Path("/Home", PathTypeEnum.Single))
                                 .FirstOrDefault();
 
             // Responds with the HTTP 404 error when the page is not found
@@ -43,7 +46,22 @@ namespace BlogPost.Controllers
             // Initializes the page data context (and the page builder) using the retrieved page
             _pageDataContextInitializer.Initialize(page);
 
-            return View();
+            var homeSource = HomeProvider.GetHome(Guid.Parse(Home.NodeGuidId), "en-US", "HouseRestaurant");
+
+            var menus = NavigationProvider.GetMenuItems();
+            var dishes = DishProvider.GetDishCategories();
+
+            var vm = new HomeViewModel()
+            {
+                Id = homeSource.First().HomeID,
+                Description = homeSource.First().Description,
+                Title = homeSource.First().Title,
+                MenuItems = menus,
+                Dishes = dishes
+            };
+
+
+            return View(vm);
         }
 
         public IActionResult Privacy()

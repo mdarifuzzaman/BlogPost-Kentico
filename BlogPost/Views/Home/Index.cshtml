@@ -1,26 +1,113 @@
 ﻿@using Kentico.PageBuilder.Web.Mvc
 @using Kentico.Web.Mvc
+@model BlogPost.Models.Home.HomeViewModel
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div>
+    <header class="row tm-welcome-section">
+        <h2 class="col-12 text-center tm-section-title">@Model.Title</h2>
+        <p class="col-12 text-center">@Model.Description</p>
+    </header>
+    <div class="tm-paging-links">
+        <nav>
+            <ul>
+                @{ 
+
+                    var i = 0;
+                    var className = "tm-paging-link active";
+                    foreach (var category in Model.Dishes.First().DishSubCategories)
+                    {
+                        <li class="tm-paging-item"><a href="#" class="@className">@category.Title</a></li>
+                        className = "tm-paging-link";
+                    }
+                }
+                @*<li class="tm-paging-item"><a href="#" class="tm-paging-link active">Pizza</a></li>
+                <li class="tm-paging-item"><a href="#" class="tm-paging-link">Salad</a></li>
+                <li class="tm-paging-item"><a href="#" class="tm-paging-link">Noodle</a></li>*@
+            </ul>
+        </nav>
+    </div>
+    <!-- Gallery -->
+    <div class="row tm-gallery">
+        <!-- gallery page 1 -->
+        @foreach (var root in Model.Dishes)
+        {
+            foreach (var category in root.DishSubCategories)
+            {
+                <div id="@category.ElementId" class="@category.CssClass">
+                    @foreach (var dish in category.Dishes)
+                    {
+                        <article class="col-lg-3 col-md-4 col-sm-6 col-12 tm-gallery-item">
+                            <figure>
+                                <img src="@dish.Image" alt="Image" class="img-fluid tm-gallery-img" />
+                                <figcaption>
+                                    <h4 class="tm-gallery-title">@dish.Title</h4>
+                                    <p class="tm-gallery-description">@dish.Summary</p>
+                                    <p class="tm-gallery-price">@dish.Price</p>
+                                </figcaption>
+                            </figure>
+                        </article>
+                    }
+                </div>
+            }
+        }
+    </div>
+    <div class="tm-section tm-container-inner">
+        <div class="row">
+            <div class="col-md-6">
+                <figure class="tm-description-figure">
+                    <img src="img/img-01.jpg" alt="Image" class="img-fluid" />
+                </figure>
+            </div>
+            <div class="col-md-6">
+                <div class="tm-description-box">
+                    <h4 class="tm-gallery-title">Maecenas nulla neque</h4>
+                    <p class="tm-mb-45">Redistributing this template as a downloadable ZIP file on any template collection site is strictly prohibited. You will need to <a rel="nofollow" href="https://templatemo.com/contact">talk to us</a> for additional permissions about our templates. Thank you.</p>
+                    <a href="about.html" class="tm-btn tm-btn-default tm-right">Read More</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div>
-    @await Html.Kentico().EditableAreaAsync("area1")
-</div>
-<div>
-    @{
-        var optionsLimited = new EditableAreaOptions
-        {
-            AllowedWidgets = new[] { "LearningKit.Widgets.NumberWidget",
-                                     "LearningKit.Widgets.SomeOtherWidget" },
-            AllowedSections = AllowedComponents.ALL
-        };
-    }
-    @await Html.Kentico().EditableAreaAsync("limitedArea", optionsLimited)
-</div>
+@section Navigation {
+    <div class="parallax-window" data-parallax="scroll" data-image-src="~/img/simple-house-01.jpg">
+        <div class="tm-header">
+            <div class="row tm-header-inner">
+                <div class="col-md-6 col-12">
+                    <img src="~/img/simple-house-logo.png" alt="Logo" class="tm-site-logo" />
+                    <div class="tm-site-text-box">
+                        <h1 class="tm-site-title">Simple House</h1>
+                        <h6 class="tm-site-description">new restaurant template</h6>
+                    </div>
+                </div>
+                <nav class="col-md-6 col-12 tm-nav">
+                    <ul class="tm-nav-ul">
+                        @foreach (var menu in Model.MenuItems)
+                        {
+                            
+                            <li class="tm-nav-li">
+                                <a class="tm-nav-link" href="@string.Format("/HouseRestaurant"+ menu.Url)">@menu.Title</a>
+                            </li>
+                        }
+                        @*<li class="tm-nav-li">
+                            <a class="tm-nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="tm-nav-li">
+                            <a class="tm-nav-link" asp-area="" asp-controller="About" asp-action="Index">About</a>
+                        </li>
+                        <li class="tm-nav-li">
+                            <a class="tm-nav-link" asp-area="" asp-controller="Jss" asp-action="Home">Contact</a>
+                        </li>*@
+                                        @*<li class="tm-nav-li"><a href="about.html" class="tm-nav-link">About</a></li>
+                        <li class="tm-nav-li"><a href="contact.html" class="tm-nav-link">Contact</a></li>*@
+                    </ul>
+                </nav>
+
+            </div>
+        </div>
+    </div>
+}
